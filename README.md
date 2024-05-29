@@ -25,8 +25,16 @@ source .venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
-5. Test that the installation worked by launching the Streamlit app:
+5. After that, go to the frontend folder and type in the below command
+```bash
+cd frontend
+```
+6. Test that the installation worked by launching the Streamlit app:
 ```bash
 streamlit run home.py
 ```
-6. Go to your browser and type ```localhost:8501```, the app should be running now
+7. Go to your browser and type ```localhost:8501```, the app should be running now
+8. For running backend, cd into backend folder and type the command below to start the server.
+```bash
+uvicorn main:app --reload
+``` 

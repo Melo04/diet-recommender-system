@@ -18,5 +18,5 @@ class Recommender:
             'ingredients':self.ingredients,
             'params':self.params
         }
-        response=requests.post(url='http://backend:8080/predict/', data=json.dumps(request))
+        response=requests.post(url='http://127.0.0.1/:8000/recommend/', data=json.dumps(request))
         return response

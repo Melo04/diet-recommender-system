@@ -1,10 +1,11 @@
-import pandas as pd
 from fastapi import FastAPI
-from pydantic import BaseModel,conlist
+from pydantic import BaseModel
 from typing import List, Optional
-from model import recommend
+from model import recommend, recommend_recipes
+import pandas as pd
+from recipe import Recipe
 
-df = pd.read_csv('./data/RAW_recipes.csv', compression='gzip')
+data = pd.read_csv('../data/filtered_data.csv')
 
 app = FastAPI()
 
@@ -12,7 +13,24 @@ class params(BaseModel):
     n_neighbors:int=5
     return_distance:bool=False
 
-class PredictionInput(BaseModel):
-    nutrition_input: conlist(float, min_items=9, max_items=9)
+class UserInput(BaseModel):
+    nutrition_input: list[float]=[]
     ingredients: list[str]=[]
+    food_type:str
     params:Optional[params]
+
+class Output(BaseModel):
+    output: Optional[List[Recipe]] = None
+
+@app.get("/")
+def home():
+    return {"health_check": "OK"}
+
+@app.post("/recommend", response_model=Output)
+def create_recommendations(user: UserInput):
+    df = recommend(data, user.nutrition_input, user.food_type, user.ingredients, user.params.dict())
+    output = recommend_recipes(df)
+    if output is None:
+        return {"output": None}
+    else:
+        return {"output": output}

@@ -81,17 +81,17 @@ recipes = Recipes()
 # recommendation form for user to input preferred nutrition values
 with st.form("recommend_form"):
     st.write("#### Enter your nutritional values below: ")
-    calories = st.slider("Calories", 0, 434360, 368)
-    total_fat = st.slider("Total fat", 0, 17183, 17)
-    sugar = st.slider("Sugar", 0, 362729, 10)
-    sodium = st.slider("Sodium", 0, 29338, 2)
-    protein = st.slider("Protein", 0, 6552, 14)
-    saturated_fat = st.slider("Saturated fat", 0, 10395, 8)
-    carbohydrates = st.slider("Carbohydrates", 0, 36098, 20)
+    Calories = st.slider("Calories", 0, 434360, 368)
+    TotalFat = st.slider("Total fat", 0, 17183, 17)
+    Sugar = st.slider("Sugar", 0, 362729, 10)
+    Sodium = st.slider("Sodium", 0, 29338, 2)
+    Protein = st.slider("Protein", 0, 6552, 14)
+    SaturatedFat = st.slider("Saturated fat", 0, 10395, 8)
+    Carbohydrates = st.slider("Carbohydrates", 0, 36098, 20)
     st.write("#### Recommendation Options (Optional)")
     ingredient = st.text_input('Specify the ingredients that you would like to include in the recommendations separated by "," :', placeholder='Eggs, Milk')
 
-    nutritions_values = [calories, total_fat, sugar, sodium, protein, saturated_fat, carbohydrates]
+    nutritions_values = [Calories, TotalFat, Sugar, Sodium, Protein, SaturatedFat, Carbohydrates]
     recommendations = st.slider("Number of recommendations", 1, 20, 5)
     recommended = st.form_submit_button("Recommend Me")
 
