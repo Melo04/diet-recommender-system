@@ -43,28 +43,34 @@ def model_pipeline(pipeline, input, data):
 # recommend user based on their input requirements
 def recommend(df, input, food_type, ingredients=[], params={'n_neighbors':5, 'return_distance':False}):
     extract_data=filter_data(df, ingredients, input, food_type)
-    prep_data,scaler=scale(extract_data)
-    neigh=knn_algo(prep_data)
-    pipeline=build_pipeline(neigh, scaler, params)
-    return model_pipeline(pipeline, input, extract_data)
+    if extract_data.empty:
+        return None
+    else:
+        prep_data,scaler=scale(extract_data)
+        neigh=knn_algo(prep_data)
+        pipeline=build_pipeline(neigh, scaler, params)
+        return model_pipeline(pipeline, input, extract_data)
 
 # generate recommended recipes
 def recommend_recipes(df):
     recipes = []
-    for _,row in df.iterrows():
-        recipe = Recipe(
-            Name=row['name'],
-            PrepTime=row['minutes'],
-            NumIngredients=row['n_ingredients'],
-            Ingredients=eval(row['ingredients']),
-            Calories=row['calories'],
-            TotalFat=row['total fat'],
-            Sugar=row['sugar'],
-            Sodium=row['sodium'],
-            Protein=row['protein'],
-            SaturatedFat=row['saturated fat'],
-            Carbohydrates=row['carbohydrates'],
-            RecipeInstructions=eval(row['steps'])
-        )
-        recipes.append(recipe.dict())
+    if df is not None:
+        for _,row in df.iterrows():
+            recipe = Recipe(
+                Name=row['name'],
+                PrepTime=row['minutes'],
+                NumIngredients=row['n_ingredients'],
+                Ingredients=eval(row['ingredients']),
+                Calories=row['calories'],
+                TotalFat=row['total fat'],
+                Sugar=row['sugar'],
+                Sodium=row['sodium'],
+                Protein=row['protein'],
+                SaturatedFat=row['saturated fat'],
+                Carbohydrates=row['carbohydrates'],
+                RecipeInstructions=eval(row['steps'])
+            )
+            recipes.append(recipe.dict())
+    else:
+        return None
     return recipes

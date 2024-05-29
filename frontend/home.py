@@ -1,5 +1,4 @@
 import streamlit as st
-import numpy as np
 import pandas as pd
 from recommender import Recommender
 
@@ -11,8 +10,10 @@ st.set_page_config(
 st.write(
     """
     # Diet Recommender System :green_salad:
-    This web application is designed to recommend a diet plan based on the user's preferences including calories, protein, fat, and carbohydrates.
-    Besides that, it could also show the nutritional information of the food items, as well as the recipes.
+    This web application is designed to recommend a diet plan based on the user's preferences such as calories, protein, fat, sodium and carbohydrates.
+    Besides that, it could also show the nutritional information for each food items, as well as the recipes to make them. The frontend is made with
+    Steamlit and the backend is built with FastAPI framework. The dataset is obtained from [Kaggle](https://www.kaggle.com/datasets/shuyangli94/food-com-recipes-and-user-interactions?select=RAW_recipes.csv)
+    which consists of 180K+ recipes covering user interactions and uploads on Food.com.
     """
 )
 
@@ -22,19 +23,19 @@ if 'recommended' not in st.session_state:
     st.session_state.recommendations = None
 
 class Recommendation:
-    def __init__(self, nutrition_list, recommendations, ingredient):
+    def __init__(self, nutrition_list, ingredient, food_type, recommendations):
         self.nutrition_list=nutrition_list
-        self.recommendations=recommendations
         self.ingredient=ingredient
+        self.food_type=food_type
+        self.recommendations=recommendations
         pass
 
     def generate(self,):
         params = {'n_neighbors':self.recommendations, 'return_distance':False}
         ingredients = self.ingredient.split(',')
-        generator = Recommender(self.nutrition_list, ingredients, params)
+        generator = Recommender(self.nutrition_list, ingredients, self.food_type, params)
         recommend = generator.recommend()
         recommend=recommend.json()['output']
-        ## 
         return recommend
     
 class Recipes:
@@ -42,63 +43,59 @@ class Recipes:
         self.nutritions=nutritions
     
     def recommend_recipes(self, recommendations):
-        st.subheader('Recommended recipes:')
+        st.subheader('Recommended food & recipes: :fork_and_knife:')
         if recommendations != None:
-            rows=len(recommendations)//5
-            for column, row in zip(st.columns(5), range(5)):
-                with column:
-                    for recipe in recommendations[rows*row:rows*(row+1)]:
-                        recipe_name = recipe['Name']
-                        expander = st.expander(recipe_name)
-                        recipe_link = recipe['image_link']
-                        recipe_img = f'<div><center><img src={recipe_link} alt={recipe_name}></center></div>'
-                        nutritions_df = pd.DataFrame({value:[recipe[value]] for value in nutritions})
+            for recipe in recommendations:
+                recipe_name = recipe['Name'].title()
+                expander = st.expander(recipe_name)
+                nutritions_df = pd.DataFrame({value:[recipe[value]] for value in nutritions})
 
-                        expander.markdown(recipe_img, unsafe_allow_html=True)
-                        expander.markdown(f'<h5 style="text-align: center;font-family:sans-serif;">Nutritional Values (g):</h5>', unsafe_allow_html=True)                   
-                        expander.dataframe(nutritions_df)
-                        expander.markdown(f'<h5 style="text-align: center;font-family:sans-serif;">Ingredients:</h5>', unsafe_allow_html=True)
-                        for ingredient in recipe['RecipeIngredientParts']:
-                            expander.markdown(f"""
-                                - {ingredient}
-                            """)
-                        expander.markdown(f'<h5 style="text-align: center;font-family:sans-serif;">Recipe Instructions:</h5>', unsafe_allow_html=True)    
-                        for instruction in recipe['RecipeInstructions']:
-                            expander.markdown(f"""
-                                - {instruction}
-                            """)
-                        expander.markdown(f'<h5 style="text-align: center;font-family:sans-serif;">Cooking and Preparation Time:</h5>', unsafe_allow_html=True)   
-                        expander.markdown(f"""
-                            - Cook Time       : {recipe['CookTime']}min
-                            - Preparation Time: {recipe['PrepTime']}min
-                            - Total Time      : {recipe['TotalTime']}min
-                        """)
+                expander.markdown(f"""
+                    Preparation Time: {recipe['PrepTime']}min
+                """)
+                expander.markdown(f'<h5 style="color:#5C61FF; text-align: center;">Nutritional Values (g):</h5>', unsafe_allow_html=True)                   
+                expander.dataframe(nutritions_df)
+                expander.markdown(f'<h5 style="color:#5C61FF; text-align: center;">Ingredients:</h5>', unsafe_allow_html=True)
+                for ingredient in recipe['Ingredients']:
+                    expander.markdown(f"""
+                        - {ingredient}
+                    """)
+                expander.markdown(f'<h5 style="color:#5C61FF; text-align: center;">Recipe Instructions:</h5>', unsafe_allow_html=True)    
+                for i, instruction in enumerate(recipe['RecipeInstructions'], start=1):
+                    expander.markdown(f"""
+                        {i}. {instruction.capitalize()}
+                    """)
         else:
-            st.info('Couldn\'t find any recipes with the specified ingredients')
+            st.info('Sorry, we couldn\'t find any recipes with the specified ingredients :(')
 
 recipes = Recipes()
 
 # recommendation form for user to input preferred nutrition values
 with st.form("recommend_form"):
     st.write("#### Enter your nutritional values below: ")
-    Calories = st.slider("Calories", 0, 434360, 368)
-    TotalFat = st.slider("Total fat", 0, 17183, 17)
-    Sugar = st.slider("Sugar", 0, 362729, 10)
-    Sodium = st.slider("Sodium", 0, 29338, 2)
-    Protein = st.slider("Protein", 0, 6552, 14)
-    SaturatedFat = st.slider("Saturated fat", 0, 10395, 8)
-    Carbohydrates = st.slider("Carbohydrates", 0, 36098, 20)
+    Calories = st.slider("Calories", 0, 5000, 368)
+    TotalFat = st.slider("Total fat", 0, 5000, 50)
+    Sugar = st.slider("Sugar", 0, 5000, 50)
+    Sodium = st.slider("Sodium", 0, 5000, 40)
+    Protein = st.slider("Protein", 0, 5000, 2300)
+    SaturatedFat = st.slider("Saturated fat", 0, 5000, 8)
+    Carbohydrates = st.slider("Carbohydrates", 0, 5000, 20)
+    option = st.selectbox(
+        "Which type of food would you prefer?",
+        ("Healthy", "Non-Vegan", "Non-Vegan dessert", "Vegan", "Vegan dessert")
+    )
+
     st.write("#### Recommendation Options (Optional)")
-    ingredient = st.text_input('Specify the ingredients that you would like to include in the recommendations separated by "," :', placeholder='Eggs, Milk')
+    ingredient = st.text_input('Specify the ingredients that you would like to include in the recommendations', placeholder='Eggs, Milk (separated by ",")')
 
     nutritions_values = [Calories, TotalFat, Sugar, Sodium, Protein, SaturatedFat, Carbohydrates]
     recommendations = st.slider("Number of recommendations", 1, 20, 5)
-    recommended = st.form_submit_button("Recommend Me")
+    recommended = st.form_submit_button("Recommend Me :)")
 
 # display loading spinner and update session state with generated recommendations
 if recommended:
     with st.spinner('Generating recommendations...'):
-        recommendations = Recommendation(nutritions_values, recommendations, ingredient)
+        recommendations = Recommendation(nutritions_values, ingredient, option, recommendations)
         recommendations = recommendations.generate()
         st.session_state.recommendations=recommendations
     st.session_state.recommended=True 
