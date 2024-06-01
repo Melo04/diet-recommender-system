@@ -21,5 +21,5 @@ class Recommender:
             'food_type':self.food_type,
             'params':self.params
         }
-        response=requests.post(url='http://127.0.0.1:8000/recommend', data=json.dumps(request))
+        response=requests.post(url='http://backend:8000/recommend', data=json.dumps(request))
         return response
