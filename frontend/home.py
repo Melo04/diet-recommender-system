@@ -11,7 +11,7 @@ st.set_page_config(
 st.write(
     """
     # Diet Recommender System :green_salad:
-    This web application is designed to recommend a diet plan based on the user's preferences such as calories, protein, fat, sodium and carbohydrates.
+    This web application utilized content-based filtering to recommend a diet plan based on the user's preferences such as calories, protein, fat, sodium and carbohydrates.
     Besides that, it could also show the nutritional information for each food items, as well as the recipes to make them. The frontend is made with
     Steamlit and the backend is built with FastAPI framework. The dataset is obtained from [Kaggle](https://www.kaggle.com/datasets/shuyangli94/food-com-recipes-and-user-interactions?select=RAW_recipes.csv)
     which consists of 180K+ recipes covering user interactions and uploads on Food.com.
