@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 from recommender import Recommender
 
 st.set_page_config(
@@ -68,11 +69,32 @@ class Recipes:
         else:
             st.info('Sorry, we couldn\'t find any recipes with the specified ingredients :(')
 
+
+    def plot_nutrition_pie(self, recipe):
+        nutritions_df = pd.DataFrame({value: [recipe[value]] for value in nutritions})
+        fig = px.pie(nutritions_df.melt(), names='variable', values='value', title='Nutritional Values')
+        st.plotly_chart(fig)
+
+    def plot_nutrition_bar(self, recommendations):
+        if recommendations:
+            data = {nutrition: [] for nutrition in nutritions}
+            recipe_names = []
+            for recipe in recommendations:
+                recipe_names.append(recipe['Name'])
+                for nutrition in nutritions:
+                    data[nutrition].append(recipe[nutrition])
+            df = pd.DataFrame(data, index=recipe_names)
+            df = df.reset_index().melt(id_vars='index', value_vars=nutritions)
+            df.columns = ['Recipe', 'Nutrient', 'Value']
+            fig = px.bar(df, x='Recipe', y='Value', color='Nutrient', barmode='group', title='Nutritional Values Comparison Among All Recipes Recommended')
+            fig.update_layout(yaxis_title="Value (g)")
+            st.plotly_chart(fig)
+
 recipes = Recipes()
 
 # recommendation form for user to input preferred nutrition values
 with st.form("recommend_form"):
-    st.write("#### Enter your nutritional values below: ")
+    st.write("#### Enter your nutritional values below : ")
     Calories = st.slider("Calories", 0, 5000, 368)
     TotalFat = st.slider("Total fat", 0, 5000, 50)
     Sugar = st.slider("Sugar", 0, 5000, 50)
@@ -103,3 +125,13 @@ if recommended:
 if st.session_state.recommended:
     with st.container():
         recipes.recommend_recipes(st.session_state.recommendations)
+
+    st.write("## Nutritional Values Percentages:")
+    recipe_names = [recipe['Name'] for recipe in st.session_state.recommendations]
+    selected_recipe_name = st.selectbox("Select a recipe", recipe_names)
+
+    selected_recipe = next(recipe for recipe in st.session_state.recommendations if recipe['Name'] == selected_recipe_name)
+    recipes.plot_nutrition_pie(selected_recipe)
+
+    st.write("## Compare the recipes below :point_down:")
+    recipes.plot_nutrition_bar(st.session_state.recommendations)
