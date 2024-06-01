@@ -7,12 +7,12 @@ services:
     image: frontend:latest
     ports:
       - 8501:8501
+    networks:
+      - app
     depends_on:
       - backend
     volumes:
       - ./frontend:/app/backend
-    networks:
-      - app
     
   backend:
     build: 
