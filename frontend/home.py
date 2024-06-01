@@ -43,6 +43,7 @@ class Recipes:
     def __init__(self):
         self.nutritions=nutritions
     
+    # display recommended recipes
     def recommend_recipes(self, recommendations):
         st.subheader('Recommended food & recipes: :fork_and_knife:')
         if recommendations != None:
@@ -66,15 +67,18 @@ class Recipes:
                     expander.markdown(f"""
                         {i}. {instruction.capitalize()}
                     """)
+        # display message if no recipes are found
         else:
-            st.info('Sorry, we couldn\'t find any recipes with the specified ingredients :(')
+            st.error('Sorry, we couldn\'t find any matching recipes according to your input :smiling_face_with_tear:')
 
-
+    # plot pie chart for nutritional values
     def plot_nutrition_pie(self, recipe):
-        nutritions_df = pd.DataFrame({value: [recipe[value]] for value in nutritions})
-        fig = px.pie(nutritions_df.melt(), names='variable', values='value', title='Nutritional Values')
-        st.plotly_chart(fig)
+        if recipe:
+            nutritions_df = pd.DataFrame({value: [recipe[value]] for value in nutritions})
+            fig = px.pie(nutritions_df.melt(), names='variable', values='value', title='Nutritional Values Percentage')
+            st.plotly_chart(fig)
 
+    # plot bar chart for nutritional values
     def plot_nutrition_bar(self, recommendations):
         if recommendations:
             data = {nutrition: [] for nutrition in nutritions}
@@ -86,7 +90,7 @@ class Recipes:
             df = pd.DataFrame(data, index=recipe_names)
             df = df.reset_index().melt(id_vars='index', value_vars=nutritions)
             df.columns = ['Recipe', 'Nutrient', 'Value']
-            fig = px.bar(df, x='Recipe', y='Value', color='Nutrient', barmode='group', title='Nutritional Values Comparison Among All Recipes Recommended')
+            fig = px.bar(df, x='Recipe', y='Value', color='Nutrient', barmode='group', title='Comparison Of Nutritional Values Among All Recipes Recommended')
             fig.update_layout(yaxis_title="Value (g)")
             st.plotly_chart(fig)
 
@@ -126,12 +130,13 @@ if st.session_state.recommended:
     with st.container():
         recipes.recommend_recipes(st.session_state.recommendations)
 
-    st.write("## Nutritional Values Percentages:")
-    recipe_names = [recipe['Name'] for recipe in st.session_state.recommendations]
-    selected_recipe_name = st.selectbox("Select a recipe", recipe_names)
+    # only display visualization if recommendations are generated
+    if st.session_state.recommendations:
+        st.write("### Visualization Of Nutritional Values:")
+        recipe_names = [recipe['Name'] for recipe in st.session_state.recommendations]
+        selected_recipe_name = st.selectbox("Select a recipe", recipe_names)
 
-    selected_recipe = next(recipe for recipe in st.session_state.recommendations if recipe['Name'] == selected_recipe_name)
-    recipes.plot_nutrition_pie(selected_recipe)
-
-    st.write("## Compare the recipes below :point_down:")
-    recipes.plot_nutrition_bar(st.session_state.recommendations)
+        selected_recipe = next(recipe for recipe in st.session_state.recommendations if recipe['Name'] == selected_recipe_name)
+        # plot pie chart and bar chart for nutritional values
+        recipes.plot_nutrition_pie(selected_recipe)
+        recipes.plot_nutrition_bar(st.session_state.recommendations)

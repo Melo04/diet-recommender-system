@@ -1,6 +1,12 @@
 ## __Diet Recommender System__
 CDS6214 Data Science Fundamentals Assignment ( Trimester 2, 23/34 )
 
+## __Overview__
+This web application is designed to recommend a diet plan based on the user's preferences such as calories, protein, fat, sodium and carbohydrates. Besides that, it could also show the nutritional information for each food items, as well as the recipes to make them. The frontend is made with Steamlit and the backend is built with FastAPI framework. The dataset is obtained from [Kaggle](https://www.kaggle.com/datasets/shuyangli94/food-com-recipes-and-user-interactions?select=RAW_recipes.csv) which consists of 180K+ recipes covering user interactions and uploads on Food.com.
+
+## __Model development__
+The recommendation engine utilizes Nearest Neighbors algorithm, an unsupervised learning approach to recommend similar food items based on the user's input. In our scenario, we opted for the brute-force method with cosine similarity because it offers quick computation for small datasets.
+
 ## __Compile and Run Instructions__
 1. In your terminal, clone the repository by typing 
 ```bash

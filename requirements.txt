@@ -12,3 +12,4 @@ fastapi-cli==0.0.4
 pydantic==2.7.1
 pydantic_core==2.18.2
 uvicorn==0.30.0
+plotly==5.22.0
