@@ -11,6 +11,8 @@ services:
       - backend
     volumes:
       - ./frontend:/app/backend
+    networks:
+      - app
     
   backend:
     build: 
