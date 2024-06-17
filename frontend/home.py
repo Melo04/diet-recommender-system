@@ -99,13 +99,13 @@ recipes = Recipes()
 # recommendation form for user to input preferred nutrition values
 with st.form("recommend_form"):
     st.write("#### Enter your preferred maximum nutritional values below : ")
-    Calories = st.slider("Calories", 20, 5000, 500)
-    TotalFat = st.slider("Total fat", 20, 5000, 250)
-    Sugar = st.slider("Sugar", 20, 5000, 1000)
-    Sodium = st.slider("Sodium", 20, 5000, 450)
-    Protein = st.slider("Protein", 20, 5000, 800)
-    SaturatedFat = st.slider("Saturated fat", 20, 5000, 800)
-    Carbohydrates = st.slider("Carbohydrates", 20, 5000, 1000)
+    Calories = st.slider("Calories", 50, 5000, 500)
+    TotalFat = st.slider("Total fat", 50, 5000, 250)
+    Sugar = st.slider("Sugar", 50, 5000, 1000)
+    Sodium = st.slider("Sodium", 50, 5000, 450)
+    Protein = st.slider("Protein", 50, 5000, 800)
+    SaturatedFat = st.slider("Saturated fat", 50, 5000, 800)
+    Carbohydrates = st.slider("Carbohydrates", 50, 5000, 1000)
     option = st.selectbox(
         "Which type of food would you prefer?",
         ("Healthy", "Non-Vegan", "Non-Vegan dessert", "Vegan", "Vegan dessert")
