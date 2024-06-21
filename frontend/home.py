@@ -18,6 +18,15 @@ st.write(
     """
 )
 
+st.write("""-----""")
+st.write(
+    """
+    #### Content-based Filtering
+    Content-based filtering is a recommendation system that suggests items based on the user's preferences. In this case, the user can input the amount of calories, protein, fat, sodium and carbohydrates they want in their diet. The recommendation engine will then suggest food items that meet the user's requirements.
+    By offering personalized recommendations, a content-based food recommendation engine assists users in making healthier eating decisions and enhancing their overall well-being.
+    """
+)
+
 nutritions = ['Calories', 'TotalFat', 'Sugar', 'Sodium', 'Protein', 'SaturatedFat', 'Carbohydrates']
 if 'recommended' not in st.session_state:
     st.session_state.recommended = False
@@ -108,7 +117,7 @@ with st.form("recommend_form"):
     Carbohydrates = st.slider("Carbohydrates", 50, 5000, 1000)
     option = st.selectbox(
         "Which type of food would you prefer?",
-        ("Healthy", "Non-Vegan", "Non-Vegan dessert", "Vegan", "Vegan dessert")
+        ("Non-Vegan", "Vegan", "Non-Vegan dessert", "Healthy", "Vegan dessert")
     )
 
     st.write("#### Recommendation Options (Optional)")

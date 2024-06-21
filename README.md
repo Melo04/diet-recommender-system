@@ -1,6 +1,6 @@
 ## __Diet Recommender System__
-CDS6214 Data Science Fundamentals Assignment ( Trimester 2, 23/34 )
-[https://diet-recommender-system.streamlit.app/](https://diet-recommender-system.streamlit.app/)
+CDS6214 Data Science Fundamentals Assignment ( Trimester 2, 23/34 )<br>
+Web application: [https://diet-recommender-system.streamlit.app/](https://diet-recommender-system.streamlit.app/)
 
 ## __Tech Stack__
 - Frontend - Streamlit
